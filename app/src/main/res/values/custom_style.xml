@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="pic_style">
+        <item name="cornerSize">35%</item>
+    </style>
+
+    <style name="floating_btn">
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>

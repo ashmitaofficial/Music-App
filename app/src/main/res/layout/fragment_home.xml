@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".HomeFragment">
+
+<!--    <com.google.android.material.navigation.NavigationView-->
+<!--        android:id="@+id/navigation_drawer"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_gravity="start"-->
+<!--        android:fitsSystemWindows="true"/>-->
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/shuffleBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:background="@android:color/transparent"
+                android:drawableTop="@drawable/shuffle_icon"
+                android:padding="10dp"
+                android:text="Shuffle"
+                android:textColor="@android:color/black" />
+
+            <Button
+                android:id="@+id/favBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:background="@android:color/transparent"
+                android:drawableTop="@drawable/fav_icon"
+                android:padding="10dp"
+                android:text="Favorites"
+                android:textColor="@android:color/black" />
+
+            <Button
+                android:id="@+id/playlistBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:background="@android:color/transparent"
+                android:drawableTop="@drawable/playlist_icon"
+                android:padding="10dp"
+                android:text="Playlist"
+                android:textColor="@android:color/black" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/totalSongs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Total Songs"
+            android:textColor="@android:color/black"
+            android:textSize="16dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/songs_recyler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_marginTop="10dp" />
+
+
+    </LinearLayout>
