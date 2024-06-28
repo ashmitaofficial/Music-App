@@ -22,8 +22,8 @@
             android:background="@android:color/transparent"
             android:src="@drawable/back_icon"
             android:tint="@color/black"
-
             />
+
 
         <TextView
             android:id="@+id/music_txt"
@@ -43,6 +43,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:src="@drawable/gray_fav_icon"
+            android:layout_marginTop="15dp"
             android:tint="@color/home_icon_colors" />
 
     </LinearLayout>
@@ -94,28 +95,13 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:id="@+id/pauseBtn"
+                android:id="@+id/playPauseBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:backgroundTint="@color/home_icon_colors"
                 app:icon="@drawable/pause_icon"
                 app:iconSize="35dp"
-                app:iconTint="@android:color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:id="@+id/playBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:backgroundTint="@color/home_icon_colors"
-                app:icon="@drawable/play_icon"
-                app:iconSize="35dp"
-                android:visibility="gone"
                 app:iconTint="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -147,19 +133,28 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/startTimingPA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:33"
             android:textSize="15sp"
             android:textStyle="bold" />
 
-        <SeekBar
-            android:layout_width="250dp"
-            android:layout_height="5dp"
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekBarPA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:ignore="NestedWeights"
+            android:thumbTint="@color/cool_blue"
+            android:progress="0"
+            android:progressTint="@color/home_icon_colors"
+            android:thumb="@drawable/circle_icon"
 
             />
 
         <TextView
+            android:id="@+id/endTimingPA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Loading.."
@@ -185,21 +180,22 @@
             android:tint="@color/cool_pink" />
 
         <ImageButton
-            android:id="@+id/equiBtn"
+            android:id="@+id/equilizerBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:src="@drawable/equilizer_icon"
-            android:tint="@color/cool_pink" />
+            android:tint="@color/cool_pink"
+            />
 
         <ImageButton
-            android:id="@+id/shuffleBtn"
+            android:id="@+id/timerBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:src="@drawable/shuffle_icon"
+            android:src="@drawable/timer_icon"
             android:tint="@color/cool_pink" />
 
         <ImageButton
@@ -209,7 +205,8 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:src="@drawable/share_icon"
-            android:tint="@color/cool_pink" />
+            android:tint="@color/cool_pink"
+            />
 
     </LinearLayout>
 

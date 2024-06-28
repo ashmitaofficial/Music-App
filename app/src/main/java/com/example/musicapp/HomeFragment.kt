@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
+import kotlin.system.exitProcess
 
 
 class HomeFragment : Fragment() {
@@ -51,7 +52,8 @@ class HomeFragment : Fragment() {
         totalSongs.text = "Total Songs: " + musicList.size
 
 
-        recyclerView.adapter = MusicAdapter(requireContext(), musicList, activity = requireActivity())
+        recyclerView.adapter =
+            MusicAdapter(requireContext(), musicList, activity = requireActivity())
 
 
         favBtn.setOnClickListener {
@@ -133,7 +135,8 @@ class HomeFragment : Fragment() {
         val cursor = requireActivity().contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection,
-            selection, null, MediaStore.Audio.Media.DATE_ADDED + " DESC", null)
+            selection, null, MediaStore.Audio.Media.DATE_ADDED + " DESC", null
+        )
         if (cursor != null) {
             if (cursor.moveToFirst())
                 do {
@@ -152,10 +155,10 @@ class HomeFragment : Fragment() {
                         cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION))
                     val albumId =
                         cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID))
-                    val uri=Uri.parse("content://media/external/audio/albumart")
-                    val artUri= Uri.withAppendedPath(uri,albumId).toString()
+                    val uri = Uri.parse("content://media/external/audio/albumart")
+                    val artUri = Uri.withAppendedPath(uri, albumId).toString()
 
-                    val music = Music(id, title, album, artist, duration,path,artUri)
+                    val music = Music(id, title, album, artist, duration, path, artUri)
                     val file = File(music.path)
                     if (file.exists()) {
                         tempList.add(music)
@@ -166,5 +169,16 @@ class HomeFragment : Fragment() {
         cursor?.close()
 
         return tempList
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (PlayerFragment.isPlaying == false) {
+            PlayerFragment.musicService?.stopForeground(true)
+            PlayerFragment.musicService?.mediaPlayer?.release()
+            exitProcess(1)
+
+
+        }
     }
 }

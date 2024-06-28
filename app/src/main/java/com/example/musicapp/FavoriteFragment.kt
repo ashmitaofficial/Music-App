@@ -5,8 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import com.example.musicapp.databinding.FragmentFavoriteBinding
+import com.example.musicapp.databinding.FragmentPlayerBinding
 
 class FavoriteFragment : Fragment() {
+    lateinit var backBtn: ImageButton
+
+    lateinit var binding: FragmentFavoriteBinding
 
 
     override fun onCreateView(
@@ -14,7 +20,15 @@ class FavoriteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorite, container, false)
+        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+
+        binding.backBtn.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
+
+        return binding.root
     }
+
 
 }
