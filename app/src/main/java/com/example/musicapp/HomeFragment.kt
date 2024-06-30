@@ -174,11 +174,10 @@ class HomeFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         if (PlayerFragment.isPlaying == false) {
-            PlayerFragment.musicService?.stopForeground(true)
-            PlayerFragment.musicService?.mediaPlayer?.release()
-            exitProcess(1)
-
-
+//            PlayerFragment.musicService?.stopForeground(true)
+//            PlayerFragment.musicService?.mediaPlayer?.release()
+//            exitProcess(1)
+            exitApplication()
         }
     }
 }

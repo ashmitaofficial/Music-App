@@ -1,5 +1,7 @@
 package com.example.musicapp
 
+import kotlin.system.exitProcess
+
 data class Music(
     val id: String?,
     val title: String?,
@@ -26,6 +28,14 @@ fun setSongPosition(increment: Boolean) {
             }
         }
     }
+}
 
+fun exitApplication() {
+    if (PlayerFragment.musicService != null) {
+        PlayerFragment.musicService?.stopForeground(true)
+        PlayerFragment.musicService?.mediaPlayer?.release()
+        PlayerFragment.musicService = null
+    }
+    exitProcess(1)
 
 }

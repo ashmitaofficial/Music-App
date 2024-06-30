@@ -149,9 +149,7 @@ class MusicService : Service() {
             PlayerFragment.binding?.seekBarPA?.progress = mediaPlayer?.currentPosition!!
             //Handler batata h ki ye jo code h kitne time baad run hona chahiye runnable se attach h handler
                 Handler(Looper.getMainLooper()).postDelayed(runnable,200)
-
         }
         Handler(Looper.getMainLooper()).postDelayed(runnable,0)
-
     }
 }

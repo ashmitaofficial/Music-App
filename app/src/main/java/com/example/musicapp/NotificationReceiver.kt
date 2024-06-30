@@ -31,10 +31,7 @@ class NotificationReceiver : BroadcastReceiver() {
 
             ApplicationClass.EXIT -> {
                 //stopForeground true means notification close
-                PlayerFragment.musicService?.stopForeground(true)
-                PlayerFragment.musicService = null
-                PlayerFragment.musicService?.mediaPlayer?.release()
-                exitProcess(1)
+                exitApplication()
             }
         }
     }
@@ -59,7 +56,8 @@ class NotificationReceiver : BroadcastReceiver() {
 //        Picasso.get().load(PlayerFragment.musicList[PlayerFragment.songPosition!!].album)
 //            .placeholder(R.drawable.song_pic)
 //            .into(PlayerFragment.binding?.songPic)
-        PlayerFragment.binding?.songName?.text = PlayerFragment.musicList[PlayerFragment.songPosition!!].title
+        PlayerFragment.binding?.songName?.text =
+            PlayerFragment.musicList[PlayerFragment.songPosition!!].title
         playMusic()
 
     }
