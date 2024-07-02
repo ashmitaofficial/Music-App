@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_margin="10dp"
+    android:padding="10dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/fav_song_pic"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/song_pic"
+        app:shapeAppearanceOverlay="@style/pic_style"
+        android:contentDescription="hawa hawai"
+        />
+
+    <TextView
+        android:id="@+id/fav_song_name"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textColor="@android:color/black"
+        android:text="song name"/>
+
+
+
+</LinearLayout>

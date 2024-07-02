@@ -9,7 +9,7 @@
     android:background="@android:color/white"
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
-    tools:context=".HomeActivity"
+    tools:context=".home.HomeActivity"
 
     >
 

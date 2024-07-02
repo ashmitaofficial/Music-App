@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.ComponentName
-import android.content.Context
 import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
 import android.content.ServiceConnection
@@ -18,14 +17,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.musicapp.databinding.FragmentPlayerBinding
+import com.example.musicapp.home.HomeFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.squareup.picasso.Picasso
@@ -176,6 +174,15 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
         }
 
         when (arguments?.getString("class")) {
+
+            "MusicAdapterSearch" ->{
+                musicList = ArrayList()
+                musicList.addAll(HomeFragment.musicSearchList)
+                setLayout()
+            }
+
+
+
             "MusicAdapter" -> {
                 musicList = ArrayList()
                 musicList.addAll(HomeFragment.musicList)
@@ -198,6 +205,7 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
 
     private fun setLayout() {
 //        Picasso.get().load(musicList[songPosition!!].album).into(song_pic)
+
         Picasso.get().load(musicList[songPosition!!].album).placeholder(R.drawable.song_pic)
             .into(binding?.songPic)
         binding?.songName?.text = musicList[songPosition!!].title

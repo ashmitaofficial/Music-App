@@ -1,11 +1,9 @@
-package com.example.musicapp
+package com.example.musicapp.home
 
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.musicapp.databinding.ActivityHomeBinding
+import com.example.musicapp.R
 
 class HomeActivity : AppCompatActivity() {
 

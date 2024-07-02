@@ -1,4 +1,4 @@
-package com.example.musicapp
+package com.example.musicapp.home
 
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -13,8 +13,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.musicapp.AppConstants
+import com.example.musicapp.favorite.FavoriteFragment
+import com.example.musicapp.Music
+import com.example.musicapp.PlayerFragment
+import com.example.musicapp.PlaylistFragment
+import com.example.musicapp.R
+import com.example.musicapp.exitApplication
 import java.io.File
-import kotlin.system.exitProcess
 
 
 class HomeFragment : Fragment() {
@@ -24,9 +30,13 @@ class HomeFragment : Fragment() {
     lateinit var playlistBtn: Button
     lateinit var totalSongs: TextView
     lateinit var recyclerView: RecyclerView
+    lateinit var search_bar: androidx.appcompat.widget.SearchView
+    var musicAdapter: MusicAdapter? = null
 
     companion object {
         lateinit var musicList: ArrayList<Music>
+        lateinit var musicSearchList: ArrayList<Music>
+        var search: Boolean = false
     }
 
 
@@ -44,6 +54,7 @@ class HomeFragment : Fragment() {
         playlistBtn = view.findViewById(R.id.playlistBtn)
         recyclerView = view.findViewById(R.id.songs_recyler_view)
         totalSongs = view.findViewById(R.id.totalSongs)
+        search_bar = view.findViewById(R.id.search_bar)
 
 
         musicList = getAllAudio()
@@ -54,6 +65,27 @@ class HomeFragment : Fragment() {
 
         recyclerView.adapter =
             MusicAdapter(requireContext(), musicList, activity = requireActivity())
+
+        search_bar.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = true
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                musicSearchList = ArrayList()
+                if (newText != null) {
+                    val userInput = newText.lowercase()
+                    for (song in musicList) {
+                        if (song.title?.lowercase()?.contains(userInput) == true) {
+                            musicSearchList.add(song)
+
+                            search = true
+                        }
+                    }
+                    ( recyclerView.adapter as MusicAdapter).updateMusicList(musicSearchList)
+
+                }
+                return true
+            }
+        })
 
 
         favBtn.setOnClickListener {
@@ -80,6 +112,8 @@ class HomeFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
+
 
         return view.rootView
     }

@@ -1,4 +1,4 @@
-package com.example.musicapp
+package com.example.musicapp.home
 
 import android.content.Context
 import android.os.Bundle
@@ -6,18 +6,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.example.musicapp.Music
+import com.example.musicapp.PlayerFragment
+import com.example.musicapp.R
 import com.example.musicapp.databinding.MusicItemBinding
 import com.squareup.picasso.Picasso
 
 
 class MusicAdapter(
     private val context: Context,
-    private val musicList: ArrayList<Music>,
+    private var musicList: ArrayList<Music>,
     val activity: FragmentActivity
 ) :
     RecyclerView.Adapter<MusicAdapter.MyViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicAdapter.MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(MusicItemBinding.inflate(LayoutInflater.from(context), parent, false))
     }
 
@@ -26,18 +29,19 @@ class MusicAdapter(
         holder.movie_name.text = musicList[position].artist
         holder.duration.text = musicList[position].duration?.let { it1 -> convertDuration(it1) }
 //      Picasso.get().load(musicList[position].album).into(holder.image)
-        Picasso.get().load(musicList[position].album).placeholder(R.drawable.song_pic).into(holder.image)
+        Picasso.get().load(musicList[position].album).placeholder(R.drawable.song_pic)
+            .into(holder.image)
         holder.cardView.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putInt("index", position)
-            bundle.putString("class", "MusicAdapter")
+            when {
+                HomeFragment.search ->
+                    sendIntent("MusicAdapterSearch", position)
 
-            activity.supportFragmentManager.beginTransaction()
-                .add(R.id.container, PlayerFragment::class.java, bundle)
-                .addToBackStack(null)
-                .commit()
-
+                else ->
+                    sendIntent("MusicAdapter", position)
+            }
         }
+
+
     }
 
     override fun getItemCount(): Int {
@@ -83,6 +87,24 @@ class MusicAdapter(
             "$minutes:$seconds"
         }
         return out
+    }
+
+    fun updateMusicList(searchList: ArrayList<Music>) {
+        musicList = ArrayList()
+        musicList.addAll(searchList)
+        notifyDataSetChanged()
+    }
+
+    private fun sendIntent(ref: String, pos: Int) {
+        val bundle = Bundle()
+        bundle.putInt("index", pos)
+        bundle.putString("class", ref)
+
+        activity.supportFragmentManager.beginTransaction()
+            .add(R.id.container, PlayerFragment::class.java, bundle)
+            .addToBackStack(null)
+            .commit()
+
     }
 
 
