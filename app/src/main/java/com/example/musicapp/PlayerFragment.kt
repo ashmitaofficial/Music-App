@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.ComponentName
+import android.content.Context
 import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
 import android.content.ServiceConnection
@@ -23,9 +24,13 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.musicapp.databinding.FragmentPlayerBinding
+import com.example.musicapp.favorite.FavoriteFragment
 import com.example.musicapp.home.HomeFragment
+import com.example.musicapp.playlist.PlaylistDetailsFragment
+import com.example.musicapp.playlist.PlaylistFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.GsonBuilder
 import com.squareup.picasso.Picasso
 
 
@@ -39,10 +44,13 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
         var musicService: MusicService? = null
         var isPlaying: Boolean = false
         var repeatBtn: Boolean = false
-        lateinit var backBtn: Button
+        lateinit var favBtn: Button
         var min15: Boolean = false
         var min30: Boolean = false
         var min60: Boolean = false
+        var isFavorite: Boolean = false
+        var favIndex: Int = -1
+
 
         @SuppressLint("StaticFieldLeak")
         var binding: FragmentPlayerBinding? = null
@@ -77,6 +85,23 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
             requireActivity().onBackPressed()
         }
 
+        binding?.favBtn?.setOnClickListener {
+            if (isFavorite) {
+                binding?.favBtn?.setImageResource(R.drawable.gray_fav_icon)
+                isFavorite = false
+                FavoriteFragment.favoriteSongs.removeAt(favIndex)
+            } else {
+                binding?.favBtn?.setImageResource(R.drawable.fav_icon)
+                isFavorite = true
+                FavoriteFragment.favoriteSongs.add(musicList[songPosition!!])
+            }
+            val editor = requireActivity().getSharedPreferences("FAVORITES", Context.MODE_PRIVATE).edit()
+            //converting favorites song to json object because shared pref.only stores primitive data type
+            val jsonString = GsonBuilder().create().toJson(FavoriteFragment.favoriteSongs)
+            editor.putString("FavoriteSongs", jsonString)
+            editor.apply()
+        }
+
         binding?.equilizerBtn?.setOnClickListener {
             try {
                 val equiIntent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL)
@@ -109,10 +134,11 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
                             ContextCompat.getColor(
                                 requireContext(),
                                 R.color.cool_pink
-                            ))
+                            )
+                        )
                     }
-                    .setNegativeButton("No"){dialog,_ -> dialog.dismiss() }
-                val customDialog= builder.create()
+                    .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
+                val customDialog = builder.create()
                 customDialog.show()
                 customDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED)
                 customDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED)
@@ -164,23 +190,22 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
         }
 
         binding?.shareBtn?.setOnClickListener {
-            val shareIntent= Intent()
+            val shareIntent = Intent()
             //set action means ye action batayega ki ye intent krta kya h
-            shareIntent.action= Intent.ACTION_SEND
+            shareIntent.action = Intent.ACTION_SEND
             //kis type ki intent share ho rha h == * se phle type of file batate h agar video hoti ti video/* likhte
-            shareIntent.type="audio/*"
-            shareIntent.putExtra(Intent.EXTRA_STREAM,  Uri.parse(musicList[songPosition!!].path))
-            startActivity(Intent.createChooser(shareIntent,"Sharing Music File"))
+            shareIntent.type = "audio/*"
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(musicList[songPosition!!].path))
+            startActivity(Intent.createChooser(shareIntent, "Sharing Music File"))
         }
 
         when (arguments?.getString("class")) {
 
-            "MusicAdapterSearch" ->{
+            "MusicAdapterSearch" -> {
                 musicList = ArrayList()
                 musicList.addAll(HomeFragment.musicSearchList)
                 setLayout()
             }
-
 
 
             "MusicAdapter" -> {
@@ -199,6 +224,67 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
 //                createMediaPlayer()
                 setLayout()
             }
+
+            "FavoriteAdapter" -> {
+                val intent= Intent(requireActivity(),MusicService::class.java)
+                requireActivity().bindService(intent,this, BIND_AUTO_CREATE)
+                requireActivity().startService(intent)
+                musicList = ArrayList()
+                musicList.addAll(FavoriteFragment.favoriteSongs)
+                setLayout()
+
+            }
+
+            "FavoriteShuffle" ->{
+                val intent= Intent(requireActivity(),MusicService::class.java)
+                requireActivity().bindService(intent,this, BIND_AUTO_CREATE)
+                requireActivity().startService(intent)
+                musicList = ArrayList()
+                musicList.addAll(FavoriteFragment.favoriteSongs)
+                musicList.shuffle()
+                setLayout()
+            }
+
+            "PlaylistDetailShuffle" ->
+            {
+                val intent= Intent(requireActivity(),MusicService::class.java)
+                requireActivity().bindService(intent,this, BIND_AUTO_CREATE)
+                requireActivity().startService(intent)
+                musicList = ArrayList()
+                musicList.addAll(PlaylistFragment.musicPlaylist.ref[PlaylistDetailsFragment.currentPlaylistPosition!!].playlist)
+                musicList.shuffle()
+                setLayout()
+            }
+
+            "PlaylistDetailsAdapter" ->
+            {
+                val intent= Intent(requireActivity(),MusicService::class.java)
+                requireActivity().bindService(intent,this, BIND_AUTO_CREATE)
+                requireActivity().startService(intent)
+                musicList = ArrayList()
+                musicList.addAll(PlaylistFragment.musicPlaylist.ref[PlaylistDetailsFragment.currentPlaylistPosition!!].playlist)
+                musicList.shuffle()
+                setLayout()
+            }
+
+            "NowPlaying" ->
+            {
+                setLayout()
+                binding!!.startTimingPA.text= musicService?.mediaPlayer?.currentPosition?.let {
+                    convertDuration(it.toLong()) }
+                binding?.endTimingPA?.text = musicService?.mediaPlayer?.duration?.toLong()
+                    ?.let { convertDuration(it) }
+                binding?.seekBarPA?.progress = 0
+                binding?.seekBarPA?.max = musicService?.mediaPlayer?.duration!!
+                if(isPlaying)
+                {
+                    binding!!.playPauseBtn.setIconResource(R.drawable.pause_icon)
+                }else{
+                    binding!!.playPauseBtn.setIconResource(R.drawable.play_icon)
+
+                }
+
+            }
         }
         return binding?.root
     }
@@ -206,9 +292,18 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
     private fun setLayout() {
 //        Picasso.get().load(musicList[songPosition!!].album).into(song_pic)
 
+        favIndex = musicList[songPosition!!].id?.let { favoriteChecker(it) }!!
+
+        if (isFavorite == true) {
+            binding?.favBtn?.setImageResource(R.drawable.fav_icon)
+        } else {
+            binding?.favBtn?.setImageResource(R.drawable.gray_fav_icon)
+        }
+
         Picasso.get().load(musicList[songPosition!!].album).placeholder(R.drawable.song_pic)
             .into(binding?.songPic)
         binding?.songName?.text = musicList[songPosition!!].title
+        binding?.songName?.isSelected = true
         if (repeatBtn == true) {
             binding?.repeatBtn?.setColorFilter(
                 ContextCompat.getColor(
@@ -224,9 +319,8 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
                     R.color.purple
                 )
             )
-        }else{
-
         }
+
 
     }
 
@@ -337,7 +431,7 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
         timerBottomsheet.findViewById<TextView>(R.id.fifteenMinTimer)?.setOnClickListener {
             Toast.makeText(requireContext(), "Music will stop after 15 minutes", Toast.LENGTH_SHORT)
                 .show()
-            min15=true
+            min15 = true
             Thread {
                 Thread.sleep(15 * 60000)
                 if (min15)
@@ -348,7 +442,8 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.purple
-                ))
+                )
+            )
         }
         timerBottomsheet.findViewById<TextView>(R.id.thirtyMinTimer)?.setOnClickListener {
             Toast.makeText(requireContext(), "Music will stop after 30 minutes", Toast.LENGTH_SHORT)
@@ -383,7 +478,8 @@ class PlayerFragment : Fragment(), ServiceConnection, MediaPlayer.OnCompletionLi
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.purple
-                ))
+                )
+            )
         }
     }
 

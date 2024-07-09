@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="15dp"-->
+<!--        android:text="NEW PLAYLIST"-->
+<!--        android:textColor="@android:color/black"-->
+<!--        android:textSize="22sp" />-->
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:hint="Playlist Name"
+        android:layout_marginTop="10dp"
+        app:boxStrokeColor="@color/cool_pink">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/playlistNameText"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:drawableStart="@drawable/playlist_icon"
+            android:maxLength="40"
+            android:drawableTint="@color/cool_pink"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:hint="Your Name"
+        app:boxStrokeColor="@color/cool_pink"
+        android:layout_marginTop="10dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/yourNameText"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:drawableStart="@drawable/playlist_icon"
+            android:drawableTint="@color/cool_pink"
+            android:maxLength="40"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="15dp"-->
+<!--        android:text="ADD"-->
+<!--        android:textColor="@color/purple"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:gravity="end"-->
+<!--        android:textSize="20dp" />-->
+
+
+</LinearLayout>

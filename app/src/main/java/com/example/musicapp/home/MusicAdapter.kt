@@ -4,19 +4,25 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicapp.Music
 import com.example.musicapp.PlayerFragment
 import com.example.musicapp.R
 import com.example.musicapp.databinding.MusicItemBinding
+import com.example.musicapp.playlist.PlaylistDetailsFragment
+import com.example.musicapp.playlist.PlaylistFragment
+import com.example.musicapp.selection.SelectionActivity
 import com.squareup.picasso.Picasso
 
 
 class MusicAdapter(
     private val context: Context,
     private var musicList: ArrayList<Music>,
-    val activity: FragmentActivity
+    val activity: FragmentActivity,
+    private val playListDetails: Boolean = false,
+    private val selectionActivity: Boolean = false
 ) :
     RecyclerView.Adapter<MusicAdapter.MyViewHolder>() {
 
@@ -31,10 +37,40 @@ class MusicAdapter(
 //      Picasso.get().load(musicList[position].album).into(holder.image)
         Picasso.get().load(musicList[position].album).placeholder(R.drawable.song_pic)
             .into(holder.image)
+
+        when{
+            playListDetails ->{
+                holder.cardView.setOnClickListener {
+                    sendIntent("PlaylistDetailsAdapter", position)
+
+                }
+            }
+        }
         holder.cardView.setOnClickListener {
             when {
                 HomeFragment.search ->
                     sendIntent("MusicAdapterSearch", position)
+
+                selectionActivity -> {
+                    holder.cardView.setOnClickListener {
+                        if (addSong(musicList[position])) {
+                            holder.cardView.setBackgroundColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.cool_pink
+                                )
+                            )
+
+                        } else {
+                            holder.cardView.setBackgroundColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.white
+                                )
+                            )
+                        }
+                    }
+                }
 
                 else ->
                     sendIntent("MusicAdapter", position)
@@ -42,6 +78,23 @@ class MusicAdapter(
         }
 
 
+    }
+
+    private fun addSong(song: Music): Boolean {
+        PlaylistFragment.musicPlaylist.ref[PlaylistDetailsFragment.currentPlaylistPosition!!].playlist.forEachIndexed { index, music ->
+            if (song.id == music.id) {
+                PlaylistFragment.musicPlaylist.ref[PlaylistDetailsFragment.currentPlaylistPosition!!].playlist.removeAt(
+                    index
+                )
+                return false
+            }
+
+
+        }
+        PlaylistFragment.musicPlaylist.ref[PlaylistDetailsFragment.currentPlaylistPosition!!].playlist.add(
+            song
+        )
+        return true
     }
 
     override fun getItemCount(): Int {
@@ -107,5 +160,11 @@ class MusicAdapter(
 
     }
 
+    fun refreshPlaylist() {
+        musicList = ArrayList()
+        musicList = PlaylistFragment.musicPlaylist.ref[
+            PlaylistDetailsFragment.currentPlaylistPosition!!].playlist
+        notifyDataSetChanged()
+    }
 
 }

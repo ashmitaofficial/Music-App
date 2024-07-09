@@ -35,6 +35,12 @@ class MusicService : Service() {
 
     fun showNotification(playPauseBtn: Int) {
 
+
+        val intent = Intent(baseContext, PlayerFragment::class.java)
+        intent.putExtra("index",PlayerFragment.songPosition)
+        intent.putExtra("class","NowPlaying")
+        val contentIntent = PendingIntent.getActivity(this, 0, intent, 0)
+
         val prevIntent = Intent(
             baseContext,
             NotificationReceiver::class.java
@@ -71,6 +77,7 @@ class MusicService : Service() {
         )
 
         val notification = NotificationCompat.Builder(baseContext, ApplicationClass.CHANNEL_ID)
+            .setContentIntent(contentIntent)
             .setContentTitle(PlayerFragment.musicList[PlayerFragment.songPosition!!].title)
             .setContentText(PlayerFragment.musicList[PlayerFragment.songPosition!!].artist)
             .setSmallIcon(R.drawable.music_icon)

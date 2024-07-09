@@ -1,5 +1,6 @@
 package com.example.musicapp.home
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -16,10 +17,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.musicapp.AppConstants
 import com.example.musicapp.favorite.FavoriteFragment
 import com.example.musicapp.Music
+import com.example.musicapp.MusicPlaylist
 import com.example.musicapp.PlayerFragment
-import com.example.musicapp.PlaylistFragment
+import com.example.musicapp.playlist.PlaylistFragment
 import com.example.musicapp.R
 import com.example.musicapp.exitApplication
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import java.io.File
 
 
@@ -31,7 +35,7 @@ class HomeFragment : Fragment() {
     lateinit var totalSongs: TextView
     lateinit var recyclerView: RecyclerView
     lateinit var search_bar: androidx.appcompat.widget.SearchView
-    var musicAdapter: MusicAdapter? = null
+//    var musicAdapter: MusicAdapter? = null
 
     companion object {
         lateinit var musicList: ArrayList<Music>
@@ -48,6 +52,28 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         requestRuntimePermission()
+
+        //for retrieving favorite data songs using shared pref
+        FavoriteFragment.favoriteSongs= ArrayList()
+        val editor = requireActivity().getSharedPreferences("FAVORITES", Context.MODE_PRIVATE)
+        val jsonString = editor.getString("FavoriteSongs", null)
+        val typeToken = object : TypeToken<ArrayList<Music>>() {}.type
+        if (jsonString != null) {
+            val data: ArrayList<Music> = GsonBuilder().create().fromJson(jsonString, typeToken)
+            FavoriteFragment.favoriteSongs.clear()
+            FavoriteFragment.favoriteSongs.addAll(data)
+        }
+
+        //for retrieving favorite data songs using shared pref
+        PlaylistFragment.musicPlaylist= MusicPlaylist()
+        val jsonStringPlaylist = editor.getString("MusicPlaylist", null)
+        if (jsonStringPlaylist != null) {
+            val dataPlaylist: MusicPlaylist = GsonBuilder().create().fromJson(jsonStringPlaylist,MusicPlaylist::class.java)
+//            FavoriteFragment.favoriteSongs.clear()
+//            PlaylistFragment.musicPlaylist= dataPlaylist
+            PlaylistFragment.musicPlaylist.ref.clear()
+            PlaylistFragment.musicPlaylist= dataPlaylist
+        }
 
         favBtn = view.findViewById(R.id.favBtn)
         shuffleBtn = view.findViewById(R.id.shuffleBtn)
@@ -66,7 +92,8 @@ class HomeFragment : Fragment() {
         recyclerView.adapter =
             MusicAdapter(requireContext(), musicList, activity = requireActivity())
 
-        search_bar.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+        search_bar.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = true
 
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -80,7 +107,7 @@ class HomeFragment : Fragment() {
                             search = true
                         }
                     }
-                    ( recyclerView.adapter as MusicAdapter).updateMusicList(musicSearchList)
+                    (recyclerView.adapter as MusicAdapter).updateMusicList(musicSearchList)
 
                 }
                 return true
@@ -205,12 +232,18 @@ class HomeFragment : Fragment() {
         return tempList
     }
 
+//    override fun onResume() {
+//        super.onResume()
+//        val editor = requireActivity().getSharedPreferences("FAVORITES", Context.MODE_PRIVATE).edit()
+//        //converting favorites song to json object because shared pref.only stores primitive data type
+//        val jsonStringPlaylist = GsonBuilder().create().toJson(PlaylistFragment.musicPlaylist)
+//        editor.putString("MusicPlaylist", jsonStringPlaylist)
+//        editor.apply()
+//    }
+
     override fun onDestroy() {
         super.onDestroy()
         if (PlayerFragment.isPlaying == false) {
-//            PlayerFragment.musicService?.stopForeground(true)
-//            PlayerFragment.musicService?.mediaPlayer?.release()
-//            exitProcess(1)
             exitApplication()
         }
     }

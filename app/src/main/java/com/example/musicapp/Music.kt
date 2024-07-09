@@ -1,5 +1,8 @@
 package com.example.musicapp
 
+import com.example.musicapp.favorite.FavoriteFragment
+import com.example.musicapp.playlist.PlaylistFragment
+import java.io.File
 import kotlin.system.exitProcess
 
 data class Music(
@@ -11,6 +14,17 @@ data class Music(
     val path: String?,
     val artUri: String?
 )
+
+class Playlist {
+    lateinit var name: String
+    lateinit var playlist: ArrayList<Music>
+    lateinit var createdBy: String
+    lateinit var createdOn: String
+}
+
+class MusicPlaylist {
+    var ref: ArrayList<Playlist> = ArrayList()
+}
 
 fun setSongPosition(increment: Boolean) {
     if (!PlayerFragment.repeatBtn) {
@@ -38,4 +52,33 @@ fun exitApplication() {
     }
     exitProcess(1)
 
+
+}
+
+fun favoriteChecker(id: String): Int {
+    PlayerFragment.isFavorite = false
+    FavoriteFragment.favoriteSongs.forEachIndexed { index, music ->
+        if (id == music.id) {
+            PlayerFragment.isFavorite = true
+            return index
+        }
+    }
+    return -1
+}
+
+fun checkPlaylist(playlist: ArrayList<Music>):ArrayList<Music>{
+
+    val updatedList= ArrayList<Music>()
+
+    playlist.forEachIndexed { index, music ->
+        val file= music.path?.let { File(it) }
+        if (file != null) {
+            if(file.exists()){
+                updatedList.add(playlist[index])
+            }
+        }
+    }
+
+
+    return updatedList
 }

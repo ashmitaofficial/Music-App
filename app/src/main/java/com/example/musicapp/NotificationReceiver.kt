@@ -59,6 +59,13 @@ class NotificationReceiver : BroadcastReceiver() {
         PlayerFragment.binding?.songName?.text =
             PlayerFragment.musicList[PlayerFragment.songPosition!!].title
         playMusic()
+        PlayerFragment.favIndex = PlayerFragment.musicList[PlayerFragment.songPosition!!].id?.let { favoriteChecker(it) }!!
+        if(PlayerFragment.isFavorite){
+            PlayerFragment.binding?.favBtn?.setImageResource(R.drawable.fav_icon)
+        }else{
+            PlayerFragment.binding?.favBtn?.setImageResource(R.drawable.gray_fav_icon)
+
+        }
 
     }
 }
